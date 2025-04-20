@@ -2,13 +2,21 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <!-- モバイル端末のズームを無効化 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>イースタータイムアタック</title>
   <style>
+    /* タッチ操作でのダブルタップズームを防止 */
+    html, body {
+      touch-action: manipulation;
+      overscroll-behavior: none;
+      margin: 0;
+      padding: 0;
+    }
     body {
       font-family: sans-serif;
       text-align: center;
       background: #fdf6e3;
-      margin: 0;
       padding: 20px;
     }
     #gameArea {
@@ -23,6 +31,7 @@
       background-position: center;
       overflow: hidden;
       border-radius: 10px;
+      touch-action: manipulation; /* タッチ操作をゲームエリア内に固定 */
     }
     .egg-img {
       position: absolute;
@@ -31,6 +40,7 @@
       cursor: pointer;
       user-select: none;
       transition: transform 0.1s;
+      touch-action: manipulation;
     }
     .egg-img:active {
       transform: scale(1.3);
@@ -43,6 +53,7 @@
       font-size: 20px;
       padding: 10px 20px;
       margin-top: 10px;
+      touch-action: manipulation;
     }
     .note {
       font-size: 12px;
@@ -134,14 +145,12 @@
       clearTimeout(spawnLoop);
       if (elapsedTime >= totalTime) return;
 
-      let interval = 1000;
-      let count = 1;
+      let interval = 1000, count = 1;
       if (elapsedTime >= 20) {
         interval = 200;
         count = 2;
       } else if (elapsedTime >= 10) {
         interval = 500;
-        count = 1;
       }
 
       spawnEggs(count);
