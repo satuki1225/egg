@@ -2,16 +2,16 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <!-- モバイル端末のズームを無効化 -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <!-- ピンチズームはOK、ダブルタップズームだけ防止 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>イースタータイムアタック</title>
   <style>
-    /* タッチ操作でのダブルタップズームを防止 */
-    html, body {
-      touch-action: manipulation;
-      overscroll-behavior: none;
+    /* ページ全体のタッチ動作調整 */
+    html, body, #gameArea {
       margin: 0;
       padding: 0;
+      touch-action: manipulation;       /* ピンチやパンは許可、ダブルタップズーム無効 */
+      overscroll-behavior: none;        /* スクロールバウンス無効 */
     }
     body {
       font-family: sans-serif;
@@ -31,7 +31,6 @@
       background-position: center;
       overflow: hidden;
       border-radius: 10px;
-      touch-action: manipulation; /* タッチ操作をゲームエリア内に固定 */
     }
     .egg-img {
       position: absolute;
@@ -89,14 +88,24 @@
   <audio id="se" src="se.mp3"></audio>
 
   <script>
-    const gameArea = document.getElementById("gameArea");
+    // ダブルタップによるズームを防止
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function(e) {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
+
+    const gameArea    = document.getElementById("gameArea");
     const scoreDisplay = document.getElementById("score");
-    const startBtn = document.getElementById("startBtn");
-    const bgm = document.getElementById("bgm");
-    const se = document.getElementById("se");
+    const startBtn    = document.getElementById("startBtn");
+    const bgm         = document.getElementById("bgm");
+    const se          = document.getElementById("se");
 
     let score, elapsedTime, gameTimer, spawnLoop;
-    const totalTime = 30;
+    const totalTime = 30; // 全体時間30秒
 
     function getRandomPosition() {
       return {
@@ -183,7 +192,7 @@
       gameArea.innerHTML = "";
 
       let comment = "🐰うーん、もっとがんばろ？";
-      if (score >= 30) comment = "🐰伝説級のハンターじゃん！";
+      if (score >= 30)   comment = "🐰伝説級のハンターじゃん！";
       else if (score >= 20) comment = "🐰おぉ～やるじゃないか！";
       else if (score >= 10) comment = "🐰まあまあだな！";
       else if (score >= 5)  comment = "🐰最初にしては悪くない！";
